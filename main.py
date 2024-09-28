@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_mysqldb import MySQL
 
+
 app = Flask(__name__)
 
 # Configuration de la base de données
@@ -9,7 +10,11 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'books_service'
 
+
 mysql = MySQL(app)
+print(mysql)
+cur = mysql.connection.cursor()
+print(cur)
 
 # Route pour ajouter un livre
 @app.route('/books', methods=['POST'])
@@ -31,10 +36,8 @@ def add_book():
 @app.route('/books', methods=['GET'])
 def get_books():
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM books')
-    books = cursor.fetchall()
-    cursor.close()
-    return jsonify(books), 200
+    print(cursor)
+    return "1"
 
 # Route pour modifier un livre
 @app.route('/books/<int:id>', methods=['PUT'])
