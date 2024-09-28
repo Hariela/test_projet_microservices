@@ -11,4 +11,5 @@ Werkzeug==3.0.4
 Flask-MySQL==1.5.2
 Flask-MySQLdb==2.0.0
 wheel==0.44.0
+waitress==3.0.0
 
