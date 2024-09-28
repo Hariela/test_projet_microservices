@@ -2,10 +2,17 @@ from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = 'books_service'
+
+mysql = MySQL(app)
 
 @app.route('/')
 def hello():
     return "Salut"
+    
 # Route pour ajouter un livre
 @app.route('/books', methods=['POST'])
 def add_book():
@@ -16,7 +23,7 @@ def add_book():
     isbn = data['isbn']
 
     cursor = mysql.connection.cursor()
-    cursor.execute('INSERT INTO books (title, author, published_date, isbn) VALUES (%s, %s, %s, %s)',
+    cursor.execute('INSERT INTO book (title, author, published_date, isbn) VALUES (%s, %s, %s, %s)',
                    (title, author, published_date, isbn))
     mysql.connection.commit()
     cursor.close()
@@ -26,7 +33,7 @@ def add_book():
 @app.route('/books', methods=['GET'])
 def get_books():
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM books')
+    cursor.execute('SELECT * FROM book')
     books = cursor.fetchall()
     cursor.close()
     return jsonify(books), 200
@@ -36,7 +43,7 @@ def get_books():
 def update_book(id):
     data = request.get_json()
     cursor = mysql.connection.cursor()
-    cursor.execute('UPDATE books SET title = %s, author = %s, published_date = %s, isbn = %s WHERE id = %s',
+    cursor.execute('UPDATE book SET title = %s, author = %s, published_date = %s, isbn = %s WHERE id = %s',
                    (data['title'], data['author'], data.get('published_date'), data['isbn'], id))
     mysql.connection.commit()
     cursor.close()
@@ -46,7 +53,7 @@ def update_book(id):
 @app.route('/books/<int:id>', methods=['DELETE'])
 def delete_book(id):
     cursor = mysql.connection.cursor()
-    cursor.execute('DELETE FROM books WHERE id = %s', (id,))
+    cursor.execute('DELETE FROM book WHERE id = %s', (id,))
     mysql.connection.commit()
     cursor.close()
     return jsonify({'message': 'Book deleted successfully!'}), 200
